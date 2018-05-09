@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Activity News{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">activity news</li>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+{% for activity_news in activity_news_list %}
+<div class="card w-85 mb-2">
+  <div class="card-body">
+    <h5 class="card-title">{{ activity_news.title }}</h5>
+    <p class="card-text"><a class="text-muted" href="{% url 'activity_news_content' activity_news.pk %}">{{ activity_news.content|truncatechars:160 }}</a></p>
+    <a href="{% url 'activity_news_content' activity_news.pk %}" class="btn btn-secondary">Details</a>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

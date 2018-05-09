@@ -13,13 +13,74 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
+
 from online_serving_platform import views
+from account import views as account_view
+
 urlpatterns = [
+
+    url(r'^settings/account/$', account_view.UserUpdateView.as_view(), name='my_account'),
+
+    url(r'^settings/password/$', auth_views.PasswordChangeView.as_view(
+        template_name='password_change.html'
+    ),
+        name='password_change'),
+
+    url(r'^settings/password/done/$', auth_views.PasswordChangeDoneView.as_view(
+        template_name='password_change_done.html'
+    ),
+        name='password_change_done'),
+
+    url(r'^signup/$', account_view.signup, name='signup'),
+    url(r'^login/$', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+
+    url(r'^reset/$',
+        auth_views.PasswordResetView.as_view(
+            template_name='password_reset.html',
+            email_template_name='password_reset_email.html',
+            subject_template_name='password_reset_subject.txt'
+        ),
+        name='password_reset'),
+
+    url(r'^reset/done/$',
+        auth_views.PasswordResetDoneView.as_view(
+            template_name='password_reset_done.html'
+        ),
+        name='password_reset_done'),
+
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name='password_reset_confirm.html'
+        ),
+        name='password_reset_confirm'),
+
+    url(r'^reset/complete/$',
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name='password_reset_complete.html'
+        ),
+        name='password_reset_complete'),
+
+    url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/reply$', views.reply_topic, name='reply_topic'),
+    url(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$', views.topic_posts, name='topic_posts'),
     url(r'^boards/(?P<pk>\d+)/new$', views.new_topic, name='new_topic'),
     url(r'^boards/(?P<pk>\d+)/$', views.board_topics, name='board_topics'),
     url(r'^boards/$', views.board, name='boards'),
+    url(r'^maps/$', views.maps, name='maps'),
     url(r'^$', views.home, name='home'),
+
+    url(r'^news/activity/(?P<pk>\d+)/$', views.activity_news_content, name='activity_news_content'),
+    url(r'^news/activity/$', views.activity_news, name='activity_news'),
+
+    url(r'^news/noting/(?P<pk>\d+)/$', views.noting_news_content, name='noting_news_content'),
+    url(r'^news/noting/$', views.noting_news, name='noting_news'),
+
+    url(r'^news/study/(?P<pk>\d+)/$', views.study_news_content, name='study_news_content'),
+    url(r'^news/study/$', views.study_news, name='study_news'),
+
     url(r'^admin/', admin.site.urls),
 ]
